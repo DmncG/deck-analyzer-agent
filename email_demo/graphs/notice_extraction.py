@@ -3,6 +3,7 @@ from email_demo.chains.escalation_check import ESCALATION_CHECK_CHAIN
 from email_demo.chains.notice_extraction import NOTICE_PARSER_CHAIN, NoticeEmailExtract
 from langgraph.graph import END, START, StateGraph
 from pydantic import EmailStr
+from email_demo.utils.graph_utils import create_legal_ticket, send_escalation_email
 from email_demo.utils.logging_config import LOGGER
 
 class GraphState(TypedDict):
@@ -47,11 +48,49 @@ def check_escalation_status_node(state: GraphState) -> GraphState:
 
     return state
 
+def send_escalation_email_node(state: GraphState) -> GraphState:
+    """Send an escalation email"""
+    send_escalation_email(
+        notice_email_extract=state["notice_email_extract"],
+        escalation_emails=state["escalation_emails"],
+    )
+    return state
+
+def create_legal_ticket_node(state: GraphState) -> GraphState:
+    """Node to create a legal ticket"""
+    follow_up = create_legal_ticket(
+        current_follow_ups=state.get("follow_ups"),
+        notice_email_extract=state["notice_email_extract"],
+    )
+    state["current_follow_up"] = follow_up
+    return state
+
+def route_escalation_status_edge(state: GraphState) -> str:
+    """Determine whether to send an escalation email or
+    create a legal ticket"""
+    if state["requires_escalation"]:
+        LOGGER.info("Escalation needed!")
+        return "send_escalation_email"
+
+    LOGGER.info("No escalation needed")
+    return "create_legal_ticket"
+
 workflow.add_node("parse_notice_message", parse_notice_message_node)
 workflow.add_node("check_escalation_status", check_escalation_status_node)
+workflow.add_node("send_escalation_email", send_escalation_email_node)
+workflow.add_node("create_legal_ticket", create_legal_ticket_node)
 
 workflow.add_edge(START, "parse_notice_message")
 workflow.add_edge("parse_notice_message", "check_escalation_status")
-workflow.add_edge("check_escalation_status", END)
+workflow.add_conditional_edges(
+    "check_escalation_status",
+    route_escalation_status_edge,
+    {
+        "send_escalation_email": "send_escalation_email",
+        "create_legal_ticket": "create_legal_ticket",
+    },
+)
+workflow.add_edge("send_escalation_email", "create_legal_ticket")
+workflow.add_edge("create_legal_ticket", END)
 
 NOTICE_EXTRACTION_GRAPH = workflow.compile()
