@@ -1,3 +1,3 @@
 # DECK ANALYZER AGENT
 
-Project aims to explore **LangGraph** and **Python** by creating a deck agent analyzer that would analyze an MTG commander deck, identify core strategies and recommend staples or other helpful cards to improve synergies within the deck.
+Project aims to explore **LangGraph** and **Python** by building an email analyzer that can extract critical information and make a decision based on the information obtained, whether it be an escalation or a follow up email to the user. I'm hoping to eventually apply these learnings for other applications like a deck analyzer agent or a more efficient way to be notified about important emails and notifications.
