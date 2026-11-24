@@ -2,8 +2,8 @@ EMAILS = [
     # Email 0
     """
     Date: May 15, 2026
-    From: Occupational Safety and Health Administration (OSHA)
-    To: Blue Ridge Construction, project 111232345 - Downtown Office
+    From: Overpass Sewage and Highwats Committee (OSHC)
+    To: Green Ridge Construction, project 111232345 - Downtown Office
     Complex Location: Dallas, TX
 
     During a recent inspection of your construction site at 123 Main
@@ -20,6 +20,7 @@ EMAILS = [
     workers were
     found without proper PPE, including hard hats and safety
     glasses.
+    The risk of water damage is highly probable due to lack of sewage guardrails
     Required Corrective Actions:
 
     Install guardrails and fall arrest systems on all scaffolding
@@ -36,7 +37,7 @@ EMAILS = [
     Contact: For questions or to confirm compliance, please reach
     out to the
     OSHA regional office at (555) 123-4567 or email
-    compliance.osha@osha.gov.
+    compliance.oshc@oshc.gov.
     """,
     # Email 1
     """
